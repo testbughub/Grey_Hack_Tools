@@ -1,0 +1,107 @@
+if params.len != 1 or params[0] == "-h" or params[0] == "--help" then
+	print("Usage: MULTI <option>")
+	print("ssh	---------------	SSH-hack")
+	print("ftp	---------------	FTP-hack")
+	print("http	---------------	HTTP-hack")
+	print("sql	---------------	SQL-hack")
+	print("smtp	---------------	SMTP-hack")
+	print("lib	---------------	lib-hack")
+	exit
+end if
+
+host = get_shell.host_computer
+
+print("-----------------------------------")
+
+get_metaxploit = function()
+	metaxploit = include_lib("/lib/metaxploit.so")
+	if not metaxploit then
+		metaxploit = include_lib(host.current_path + "/metaxploit.so")
+		if not metaxploit then
+			exit("Unable to load metaxploit.so")
+		end if
+	end if
+
+	return metaxploit
+end function
+
+////////////////////////////////////////////
+
+passwd = get_shell.host_computer.File("/etc/passwd")
+if passwd.has_permission("r") then
+	print("passwd is accessable!")
+end if
+
+print("-----------------------------------")
+
+////////////////////////////////////////////
+
+//sshhack = function()
+	
+
+////////////////////////////////////////////
+
+if params[0] == "ssh" then
+	exit("sshhack")
+else if params[0] == "ftp" then
+	exit("ftphack")
+else if params[0] == "http" then
+	exit("httphack")
+else if params[0] == "sql" then
+	exit("sqlhack")
+else if params[0] == "smtp" then
+	exit("smtphack")
+else if params[0] == "lib" then
+	exit("libhack")
+else
+	print("Usage: MULTI <option>")
+	print("ssh	---------------	SSH-hack")
+	print("ftp	---------------	FTP-hack")
+	print("http	---------------	HTTP-hack")
+	print("sql	---------------	SQL-hack")
+	print("smtp	---------------	SMTP-hack")
+	print("lib	---------------	lib-hack")
+	exit
+end if
+
+
+////////////////////////////////////////////
+
+//print("-----------------------------------")
+
+get_libs = function()
+	parent = get_shell.host_computer.File("/lib")
+	files = parent.get_files
+	for file in files
+		print("Found: " + file.name)
+	end for
+	if file.len == 1 and libs[0] == "" then
+		exit("No libraries.")
+	end if
+end function
+//get_libs
+
+//print("-----------------------------------")
+
+
+
+//print("-----------------------------------")
+
+//print("Trying to escelate privilages")
+
+//metaxploit = include_lib("/lib/metaxploit.so")
+//metaLib = metaxploit.load("/lib/net.so")
+
+//if not metaxploit then
+//	currentPath = get_shell.host_computer.current_path
+//	metaxploit = include_lib(currentPath + "/metaxploit.so")
+//end if
+//if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
+
+//if not metaLib then exit("Can't find " + "/lib/net.so")
+//result = metaLib.overflow("0x8CDAA4C", "visualedth")
+//if typeof(result) == "shell" then
+//	result.start_terminal
+//else
+//	print("Error: expected shell, obtained: " + result)
+//end if
