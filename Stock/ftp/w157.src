@@ -1,0 +1,57 @@
+if params.len != 2 or params[0] == "-h" or params[0] == "--help" then exit("<b>Usage: exploit [ip_address] [port]</b>")
+metaxploit = include_lib("/lib/metaxploit.so")
+if not metaxploit then
+    currentPath = get_shell.host_computer.current_path
+    metaxploit = include_lib(currentPath + "/metaxploit.so")
+end if
+if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
+address = params[0]
+port = params[1].to_int
+net_session = metaxploit.net_use( address, port )
+if not net_session then exit("Error: can't connect to net session")
+metaLib = net_session.dump_lib
+result = metaLib.overflow("0x5862968A", "squalby")
+if not result then exit("Program ended")
+if typeof(result) != "file" then exit("Error: expected file, obtained: " + result)
+if not result.is_folder then exit("Error: expected folder, obtained file: " + result.path)
+if not result.has_permission("r") then exit("Error: can't access to " + result.path + ". Permission denied." )
+AccessMailFile = function(homeFolder)
+	print("Accesing to Mail.txt files...\nSearching users...")
+	folders = homeFolder.get_folders
+	for user in folders
+		print("User: " + user.name +" found...")
+		subFolders = user.get_folders
+		mailFound = false
+		for subFolder in subFolders
+			if subFolder.name == "Config" then
+				files = subFolder.get_files
+				for file in files
+					if file.name == "Mail.txt" then
+						if not file.has_permission("r") then print("failed. Can't access to file contents. Permission denied")
+						print("success! Printing file contents...\n" + file.content)
+						mailFound = true
+					end if
+				end for
+			end if
+		end for
+		if not mailFound then print("Mail file not found.")
+	end for
+	if folders.len == 0 then print("No users found. Program aborted")
+end function
+
+if result.path == "/home" then
+	AccessMailFile(result)
+else
+	print("Searching home folder...")
+	while not result.path == "/"
+		result = result.parent
+	end while
+
+	folders = result.get_folders
+	for folder in folders
+		if folder.path == "/home" then
+			AccessMailFile(folder)
+			exit
+		end if
+	end for
+end if
