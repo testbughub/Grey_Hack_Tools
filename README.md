@@ -2,4 +2,4 @@
 ## WIP
 
 
-### Some scripts where sourced from https://github.com/thedax/Grey-Hack-Game-Scripts
+Some scripts where sourced from https://github.com/thedax/Grey-Hack-Game-Scripts
