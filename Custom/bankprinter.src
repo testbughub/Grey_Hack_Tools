@@ -1,0 +1,27 @@
+result = get_shell.host_computer
+homeFolder = result.File("/home")
+if not homeFolder then exit("Error: /home folder not found")
+userFolders = homeFolder.get_folders
+found = false
+bankUsers = []
+for userFolder in userFolders
+	bankFile = result.File("/home/" + userFolder.name + "/Config/Bank.txt")
+	if not bankFile then continue
+	if not bankFile.has_permission("r") then exit("Error: can't read file contents. Permission denied")
+	bankUsers.push(bankFile.content)
+	found = true
+end for
+if not found then exit("No files found")
+
+host = get_shell.host_computer
+bankFileName = "bank_" + get_router.public_ip + ".txt"
+print("attempting to create " + bankFileName)
+if not host.touch(home_dir, bankFileName) then exit("unable to create file")
+
+bankFile = host.File(home_dir + "/" + bankFileName)
+if not bankFile then exit("unable to read file")
+bankFile.set_content("")
+for user in bankUsers
+	bankFile.set_content(bankFile.content + user + "\n")
+	end for
+
