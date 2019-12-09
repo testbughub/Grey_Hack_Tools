@@ -1,3 +1,6 @@
+host = get_shell.host_computer
+homeFolder = "/home/testbug"
+
 if params.len != 2 or params[0] == "-h" or params[0] == "--help" then
 	print("Usage: MULTI <target-ip> <option>")
 	print("scan	---------------	Scan target")
@@ -10,14 +13,28 @@ if params.len != 2 or params[0] == "-h" or params[0] == "--help" then
 	exit
 end if
 
-host = get_shell.host_computer
+
+////////////////////////////////////////////
+
+target = params[0]
+scantarget = function()
+	print("-----------------------------------")
+	who = whois(target)
+	print(who)
+	print("-----------------------------------")
+	services = get_shell.launch("/bin/nmap", target)
+	host.touch(homeFolder, "temp.txt")
+	tempFile = host.File(homeFolder + "/" + "temp.txt")
+	tempFile.set_content(services)
+	print("-----------------------------------")
+end function
 
 ////////////////////////////////////////////
 
 //SSH
 
 sshhack = function()
-//rimaidm3rm41d
+	//rimaidm3rm41d
 	print("-----------------------------------")
 	print("Trying to access passwd file")
 	print("-----------------------------------")
@@ -44,53 +61,53 @@ sshhack = function()
 		for file in files
 			if file.name == "passwd" then
 				if not file.has_permission("r") then print("Failed. Can't access to file contents. Permission denied")
-				else
-					exit("Success! Loading content...\n" + file.content)
-				end if
+			else
+				exit("Success! Loading content...\n" + file.content)
 			end if
-		end for
-		exit("Error: /etc/passwd file not found. Program aborted");
-	end function
+		end if
+	end for
+	exit("Error: /etc/passwd file not found. Program aborted");
+end function
 
-	print("Obtained access to " + result.path)
-	if result.path == "/etc" then
-		AccessPasswdFile(result)
-	else
-		print("Attempting to reach /etc folder...")
-		while result.path != "/"
-			result = result.parent
-		end while
-		folders = result.get_folders
-		for folder in folders
-			if folder.path == "/etc" then
-				AccessPasswdFile(folder)
-			end if
-		end for
-	end if
+print("Obtained access to " + result.path)
+if result.path == "/etc" then
+	AccessPasswdFile(result)
+else
+	print("Attempting to reach /etc folder...")
+	while result.path != "/"
+		result = result.parent
+	end while
+	folders = result.get_folders
+	for folder in folders
+		if folder.path == "/etc" then
+			AccessPasswdFile(folder)
+		end if
+	end for
+end if
 
 //quirt5qu1r7
-	print("-----------------------------------")
-	print("Trying get guest access")
-	print("-----------------------------------")
+print("-----------------------------------")
+print("Trying get guest access")
+print("-----------------------------------")
 
-	metaxploit = include_lib("/lib/metaxploit.so")
-	if not metaxploit then
-		currentPath = get_shell.host_computer.current_path
-		metaxploit = include_lib(currentPath + "/metaxploit.so")
-	end if
-	if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
-	address = params[0]
-	port = 22
-	net_session = metaxploit.net_use( address, port )
-	if not net_session then exit("Error: can't connect to net session")
-	metaLib = net_session.dump_lib
-	result = metaLib.overflow("0xD7991E3", "hissta")
-	if not result then print("Program ended")
-	if typeof(result) == "shell" then
-		result.start_terminal
-	else
-		print("Error: expected shell, obtained: " + result)
-	end if
+metaxploit = include_lib("/lib/metaxploit.so")
+if not metaxploit then
+	currentPath = get_shell.host_computer.current_path
+	metaxploit = include_lib(currentPath + "/metaxploit.so")
+end if
+if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
+address = params[0]
+port = 22
+net_session = metaxploit.net_use( address, port )
+if not net_session then exit("Error: can't connect to net session")
+metaLib = net_session.dump_lib
+result = metaLib.overflow("0xD7991E3", "hissta")
+if not result then print("Program ended")
+if typeof(result) == "shell" then
+	result.start_terminal
+else
+	print("Error: expected shell, obtained: " + result)
+end if
 
 end function
 
@@ -99,15 +116,15 @@ end function
 //FTP
 
 ftphack = function()
-//aproxyp
+	//aproxyp
 	print("-----------------------------------")
 	print("Trying to get guest access")
 	print("-----------------------------------")
 
 	metaxploit = include_lib("/lib/metaxploit.so")
 	if not metaxploit then
-	    currentPath = get_shell.host_computer.current_path
-	    metaxploit = include_lib(currentPath + "/metaxploit.so")
+		currentPath = get_shell.host_computer.current_path
+		metaxploit = include_lib(currentPath + "/metaxploit.so")
 	end if
 	if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
 	address = params[0]
@@ -129,15 +146,15 @@ end function
 //HTTP
 
 httphack = function()
-//iritco
+	//iritco
 	print("-----------------------------------")
 	print("Trying to get guest access")
 	print("-----------------------------------")
 
 	metaxploit = include_lib("/lib/metaxploit.so")
 	if not metaxploit then
-	    currentPath = get_shell.host_computer.current_path
-	    metaxploit = include_lib(currentPath + "/metaxploit.so")
+		currentPath = get_shell.host_computer.current_path
+		metaxploit = include_lib(currentPath + "/metaxploit.so")
 	end if
 	if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
 	address = params[0]
@@ -153,15 +170,15 @@ httphack = function()
 		print("Error: expected shell, obtained: " + result)
 	end if
 
-//script
+	//script
 	print("-----------------------------------")
 	print("Trying to get bank files")
 	print("-----------------------------------")
 
 	metaxploit = include_lib("/lib/metaxploit.so")
 	if not metaxploit then
-	    currentPath = get_shell.host_computer.current_path
-	    metaxploit = include_lib(currentPath + "/metaxploit.so")
+		currentPath = get_shell.host_computer.current_path
+		metaxploit = include_lib(currentPath + "/metaxploit.so")
 	end if
 	if not metaxploit then exit("Error: Can't find metaxploit library in the /lib path or the current folder")
 	address = params[0]
@@ -206,18 +223,38 @@ httphack = function()
 	end for
 	if not found then print("No files found")
 
-end function
+// bankprinter
 
-////////////////////////////////////////////
+	if printtofile = user_input("Do you want to save bank creds to a file?")
+	then
+		result = get_shell.host_computer
+		homeFolder = result.File("/home")
+		if not homeFolder then exit("Error: /home folder not found")
+		userFolders = homeFolder.get_folders
+		found = false
+		bankUsers = []
+		for userFolder in userFolders
+			bankFile = result.File("/home/" + userFolder.name + "/Config/Bank.txt")
+			if not bankFile then continue
+			if not bankFile.has_permission("r") then exit("Error: can't read file contents. Permission denied")
+			bankUsers.push(bankFile.content)
+			found = true
+		end for
+		if not found then exit("No files found")
 
-target = params[0]
-scantarget = function()
-	print("-----------------------------------")
-	who = whois(target)
-	print(who)
-	print("-----------------------------------")
-	get_shell.launch("/bin/nmap", target)
-	print("-----------------------------------")
+		host = get_shell.host_computer
+		bankFileName = "bank_" + get_router.public_ip + ".txt"
+		print("attempting to create " + bankFileName)
+		if not host.touch(home_dir, bankFileName) then exit("unable to create file")
+
+		bankFile = host.File(home_dir + "/" + bankFileName)
+		if not bankFile then exit("unable to read file")
+		bankFile.set_content("")
+		for user in bankUsers
+			bankFile.set_content(bankFile.content + user + "\n")
+		end for
+	end if
+
 end function
 
 ////////////////////////////////////////////
