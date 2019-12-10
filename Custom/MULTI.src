@@ -225,11 +225,11 @@ httphack = function()
 
 // bankprinter
 
-	if printtofile = user_input("Do you want to save bank creds to a file?")
-	then
+	savetofile = "n"
+	savetofile = user_input("Do you want to save the banking creds as a file? [y/n]\n")
+	if savetofile == "y" then
 		result = get_shell.host_computer
 		homeFolder = result.File("/home")
-		if not homeFolder then exit("Error: /home folder not found")
 		userFolders = homeFolder.get_folders
 		found = false
 		bankUsers = []
@@ -244,15 +244,14 @@ httphack = function()
 
 		host = get_shell.host_computer
 		bankFileName = "bank_" + get_router.public_ip + ".txt"
-		print("attempting to create " + bankFileName)
-		if not host.touch(home_dir, bankFileName) then exit("unable to create file")
 
 		bankFile = host.File(home_dir + "/" + bankFileName)
-		if not bankFile then exit("unable to read file")
 		bankFile.set_content("")
 		for user in bankUsers
 			bankFile.set_content(bankFile.content + user + "\n")
 		end for
+	else
+		print("Not saving to file")
 	end if
 
 end function
